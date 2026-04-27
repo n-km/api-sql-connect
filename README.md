@@ -27,3 +27,22 @@ The file will be created automatically.
 ```powershell
 python -m uvicorn main:app --reload --port 19999
 ```
+
+### Documentation
+
+Just build your own documentation of this project with pdoc.
+
+#### How I installed pdoc: 
+```python -m pip install pdoc```
+
+#### Generate docs:
+
+```
+$env:PYTHONPATH = ".\app"
+python -m pdoc ./app
+```
+Now, you have a ``` ./doc ``` folder and can enter the ``` index.html ``` locally.
+
+#### IF YOU DONT WANT TO BUILD BY YOURSELF
+- Use the existing ``` .docs/index.html ```
+- May, It's not an updated version
