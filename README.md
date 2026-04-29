@@ -33,9 +33,17 @@ python -m uvicorn main:app --reload --port 19999
 Just build your own documentation of this project with pdoc.
 
 #### How I installed pdoc: 
-```python -m pip install pdoc```
+```
+python -m pip install pdoc
+```
 
-#### Generate docs:
+#### Run local server
+```
+python -m pdoc app
+```
+
+
+#### Generate docs (for static use):
 
 ```
 $env:PYTHONPATH = ".\app"
