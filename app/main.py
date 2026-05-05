@@ -13,7 +13,10 @@ from modules.routes import router
 app = FastAPI(
     title="API SQL Connect",
     description="A backend service to manage user data in an SQLite database.",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url=f"/docs",
+    redoc_url=f"/redoc",
+    openapi_url=f"/openapi.json",
 )
 
 # CORS configuration: Allows requests from any website

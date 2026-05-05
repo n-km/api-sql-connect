@@ -5,13 +5,17 @@ This module contains all API endpoints related to user authentication,
 profile updates, and listing users.
 """
 
+from datetime import datetime
 from fastapi import APIRouter
 import sqlite3
+
+import fastapi
 
 # Import the database function and models from your other files
 # The "." means "look in the same folder as this file"
 from .database import get_db_connection
 from .models import UserAuth, UpdateProfileRequest, ChangePasswordRequest
+from .log import log
 
 # Create the router
 router = APIRouter(tags=["User Management"])
@@ -32,16 +36,18 @@ def register_user(user: UserAuth):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        default_username = user.email.split("@")[0]
         cursor.execute(
-            "INSERT INTO users (email, password, username) VALUES (?, ?, ?)",
-            (user.email, user.password, default_username),
+            "INSERT INTO users (email, password) VALUES (?, ?)",
+            (user.email, user.password),
         )
         conn.commit()
+        log(datetime.now(), "SUCCESS - Registration", user.email)
         return {"status": "success", "message": "Account created successfully"}
     except sqlite3.IntegrityError:
+        log(datetime.now(), "ERROR - Registration(Email already registered)", user.email)
         return {"status": "error", "message": "Email already registered"}
     except Exception as e:
+        log(datetime.now(), "ERROR - Registration", user.email, str(e))
         return {"status": "error", "message": str(e)}
     finally:
         conn.close()
@@ -66,13 +72,14 @@ def login_user(user: UserAuth):
     conn.close()
 
     if user_data:
-        return {"status": "success", "message": "Login successful"}
+        log(datetime.now(), "Login successful", user.email)
+        return {"status": "success", "message": "Login successful", "user_id": user_data[0]}
     return {"status": "error", "message": "Invalid email or password"}
 
 @router.post("/update-profile")
 def update_profile(data: UpdateProfileRequest):
     """
-    Updates the email and username for a user.
+    Updates the email for a user.
 
     Args:
         data (UpdateProfileRequest): The old email and the new information.
@@ -83,13 +90,9 @@ def update_profile(data: UpdateProfileRequest):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        username_clean = data.newUsername.strip()
-        if not username_clean:
-            return {"status": "error", "message": "Username cannot be empty"}
-
         cursor.execute(
-            "UPDATE users SET email = ?, username = ? WHERE email = ?",
-            (data.newEmail, username_clean, data.currentEmail),
+            "UPDATE users SET email = ? WHERE email = ?",
+            (data.newEmail, data.currentEmail),
         )
         conn.commit()
 
@@ -153,6 +156,28 @@ def list_users():
     """
     conn = get_db_connection()
     cursor = conn.cursor()
-    users = cursor.execute("SELECT id, email, username FROM users").fetchall()
+    users = cursor.execute("SELECT * FROM users").fetchall()
     conn.close()
     return [dict(user) for user in users]
+
+@router.get("/plan")
+def get_user_plan(email: str):
+    """
+    Returns the 'plan' of a user based on their email address.
+    
+    Args:
+        email (str): The email address of the user to look up.
+    
+    Returns:
+        dict: A dictionary containing the user's plan, or an error message if not found.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # Verwenden Sie ein Parameterized Query, um SQL-Injection zu vermeiden
+    user = cursor.execute("SELECT plan FROM users WHERE email = ?", (email,)).fetchone()
+    conn.close()
+    
+    if user:
+        return {"plan": user["plan"]}
+    else:
+        return {"error": "User not found"}   

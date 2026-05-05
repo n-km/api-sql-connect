@@ -1,0 +1,13 @@
+2026-04-30 11:39:31,036 - Login successful - n-km@example.com
+2026-04-30 11:44:13,587 - Login successful - n-km@example.com
+2026-04-30 11:45:48,205 - Login successful - n-km@example.com
+2026-04-30 12:02:35,753 - Login successful - n-km@example.com
+2026-04-30 13:00:16,649 - ERROR - Registration - exception@example.com | Exception: 3 values for 2 columns
+2026-04-30 13:21:08,253 - SUCCESS - Registration - exception@example.com
+2026-04-30 13:28:03,410 - Login successful - exception@example.com
+2026-04-30 14:30:29,286 - Login successful - exception@example.com
+2026-04-30 14:36:21,617 - Login successful - exception@example.com
+2026-05-04 11:09:29,200 - Login successful - n-km@example.com
+2026-05-04 11:49:20,206 - SUCCESS - Registration - user@example.com
+2026-05-04 13:33:12,129 - Login successful - n-km@example.com
+2026-05-04 13:33:47,066 - Login successful - n-km@example.com

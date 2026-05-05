@@ -22,15 +22,13 @@ def get_db_connection():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
-            username TEXT
-        )
+            plan TEXT NOT NULL DEFAULT 'free',
+            status TEXT NOT NULL DEFAULT 'active',
+            filename_consent BOOLEAN NOT NULL DEFAULT 0, -- 0 for false, 1 for true
+            is_admin BOOLEAN NOT NULL DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
         """
     )
-
-    # Database Migration: Add 'username' column if the database is old
-    columns = [row["name"] for row in conn.execute("PRAGMA table_info(users)").fetchall()]
-    if "username" not in columns:
-        conn.execute("ALTER TABLE users ADD COLUMN username TEXT")
-        conn.commit()
 
     return conn
